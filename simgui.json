@@ -1,0 +1,34 @@
+{
+  "HALProvider": {
+    "Other Devices": {
+      "ADXRS450[0]": {
+        "header": {
+          "open": true
+        }
+      }
+    }
+  },
+  "NTProvider": {
+    "types": {
+      "/FMSInfo": "FMSInfo",
+      "/LiveWindow/Ungrouped/ADXRS450_Gyro[0]": "Gyro",
+      "/LiveWindow/Ungrouped/DifferentialDrive[1]": "DifferentialDrive",
+      "/LiveWindow/Ungrouped/Scheduler": "Scheduler",
+      "/LiveWindow/Ungrouped/class frc2::SubsystemBase": "Subsystem"
+    }
+  },
+  "NetworkTables": {
+    "LiveWindow": {
+      "Ungrouped": {
+        "ADXRS450_Gyro[0]": {
+          "open": true
+        },
+        "DifferentialDrive[1]": {
+          "open": true
+        },
+        "open": true
+      },
+      "open": true
+    }
+  }
+}
