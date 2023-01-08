@@ -7,12 +7,18 @@
 // --- GENERAL FRC --- //
 #include <frc2/command/Command.h>
 #include <frc/XboxController.h>
+#include <frc2/command/button/Button.h>
+#include <frc2/command/button/Trigger.h>
+#include <frc2/command/InstantCommand.h>
 
 // --- SUBSYSTEMS --- //
 #include <subsystems/Drive.h>
 
 // --- COMMANDS -- //
 #include <commands/DefaultDrive.h>
+#include <commands/BalanceDrive.h>
+
+// --- OTHER --- //
 
 /**
  * This class is where the bulk of the robot should be declared.  Since
@@ -29,11 +35,31 @@ class RobotContainer {
 
  private:
   
-  frc::XboxController driver_controller{ControllerConstants::driver_controller_port};
-
-  frc2::Command* m_autonomousCommand;
+  /* ----- SUBSYSTEM DECALARATIONS ----- */
 
   Drive m_drive;
 
+
+  /* ----- SIMPLE COMMAND DECALARATIONS ---- */
+
+  // [DRIVE]
+  frc2::InstantCommand toggle_balance{ [this] { m_drive.ToggleBalance(); }, {&m_drive} };
+
+
+  /* ----- AUTO DECLARATIONS ---- */
+
+  frc2::Command* m_autonomousCommand;
+
+
+  /* ------ CONTROLLER/BUTTON DECLARATIONS ---- */
+
+  frc::XboxController driver_controller{ControllerConstants::driver_controller_port};
+
+  frc2::Button a_button{[&] { return driver_controller.GetAButton(); } };
+  frc2::Button b_button{[&] { return driver_controller.GetBButton(); } };
+  frc2::Button x_button{[&] { return driver_controller.GetXButton(); } };
+  frc2::Button y_button{[&] { return driver_controller.GetYButton(); } };
+
   void ConfigureButtonBindings();
+
 };

@@ -56,6 +56,9 @@ Drive::Drive() {
     this->left_talon.SetSensorPhase(false);
     this->right_talon.SetSensorPhase(false);
 
+    // do not start balancing
+    this->balance_active = false;
+
 }
 
 // This method will be called once per scheduler run
@@ -141,5 +144,23 @@ void Drive::ArcadeDrive(double forward, double rotate) {
 
     // call arcade drive on DifferentialDrive object
     drive.ArcadeDrive(forward, rotate);
+
+}
+
+void Drive::GetTiltAngles(double* tiltAngles) {
+
+    this->pigeon_imu.GetAccelerometerAngles(tiltAngles);
+
+}
+
+void Drive::ToggleBalance() {
+
+    this->balance_active = !this->balance_active;
+
+}
+
+bool Drive::GetBalanceActive() {
+
+    return this->balance_active;
 
 }

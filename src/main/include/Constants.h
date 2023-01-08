@@ -39,6 +39,7 @@ namespace DriveConstants {
     const PID_Coefficients drive_PID_coefficients(0, 0.1, 2.0e-5, 0);
     const PID_Coefficients gyro_PID_coefficients(0, 0.008333, 0, 0);
     const PID_Coefficients limelight_PID_coefficients(0, 0.035, 2.0e-5, 0);
+    const PID_Coefficients balance_coefficients(0, 0, 0, 0);
 
     // control drive mode (either curvature or arcade)
     const int drive_mode = ARCADE_DRIVE_MODE;
@@ -48,6 +49,11 @@ namespace DriveConstants {
     const auto track_width = 30_in;
 
     const int gyroscope_cs = 0;
+
+    const int pigeon_id = 0;
+
+    const double balanced_angle = 0.0;
+    enum Axis {x=0, y=1, z=2};
 
 }
 

@@ -13,7 +13,11 @@ RobotContainer::RobotContainer() {
 }
 
 void RobotContainer::ConfigureButtonBindings() {
-  // Configure your button bindings here
+
+  x_button.WhenPressed(&toggle_balance);
+  frc2::Trigger balance_trigger( [this] { return m_drive.GetBalanceActive(); } );
+  balance_trigger.WhenActive( BalanceDrive(&m_drive) );
+
 }
 
 frc2::Command* RobotContainer::GetAutonomousCommand() {

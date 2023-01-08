@@ -48,6 +48,12 @@ class Drive : public frc2::SubsystemBase {
   frc::DifferentialDriveWheelSpeeds GetWheelSpeeds(frc::ChassisSpeeds chs_spd);
   // DriveToDistance will use PID control and encoders to drive a specific distance in a straight line
   void DriveToDistance(double setpoint);
+  // Get tilt angles from Pigeon IMU accelerometer
+  void GetTiltAngles(double* tiltAngles);
+  // Toggle balance variable
+  void ToggleBalance();
+  // Get balance variable
+  bool GetBalanceActive();
 
  private:
   // All of the left motor controllers are defined here
@@ -71,6 +77,10 @@ class Drive : public frc2::SubsystemBase {
   frc::ADXRS450_Gyro gyroscope;
   // network tables pointer
   std::shared_ptr<nt::NetworkTable> table = nt::NetworkTableInstance::GetDefault().GetTable("drive");
+  // IMU
+  ctre::phoenix::sensors::PigeonIMU pigeon_imu = {DriveConstants::pigeon_id};
+  // variable to keep track of whether or not to balance
+  bool balance_active;
 
 
 };
