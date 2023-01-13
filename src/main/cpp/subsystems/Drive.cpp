@@ -6,7 +6,9 @@
 #include "subsystems/Drive.h"
 
 // Drive constructor
-Drive::Drive() {
+Drive::Drive() : 
+m_odometry{ frc::Rotation2d(units::degree_t(this->GetAngle())), units::meter_t(0.0), units::meter_t(0.0) }
+{
 
     this->table->PutNumber("kP", DriveConstants::drive_PID_coefficients.kP);
     this->table->PutNumber("kI", DriveConstants::drive_PID_coefficients.kI);
@@ -62,8 +64,9 @@ Drive::Drive() {
 // No implementation necessary
 void Drive::Periodic() {
 
-    encoder_filter.Calculate( this->left_talon.GetSelectedSensorVelocity() );
-
+    frc::Rotation2d rotation{ units::degree_t(this->GetAngle()) };
+    m_odometry.Update(rotation, this->GetEncoderPosition(DriveConstants::Side::left), this->GetEncoderPosition(DriveConstants::Side::right));
+    
 }
 
 void Drive::ResetEncoder() {
@@ -74,10 +77,18 @@ void Drive::ResetEncoder() {
 
 }
 
-double Drive::GetVelocity() {
+units::meters_per_second_t Drive::GetVelocity(DriveConstants::Side side) {
 
-    // get the filtered velocity of just the left side
-    return encoder_filter.Calculate( this->left_talon.GetSelectedSensorVelocity() );
+    if (side == DriveConstants::Side::left) {
+
+        return units::meters_per_second_t( this->left_talon.GetSelectedSensorPosition() );
+
+    }
+    else {
+
+        return units::meters_per_second_t{ this->right_talon.GetSelectedSensorPosition() };
+
+    }
 
 }
 
@@ -89,13 +100,13 @@ double Drive::GetPosition() {
 
 void Drive::ResetAngle() {
 
-    this->gyroscope.Reset();
+    return;
 
 }
 
 double Drive::GetAngle() {
 
-    return this->gyroscope.GetAngle();
+    return this->pigeon_imu.GetFusedHeading();
 
 }
 
@@ -105,10 +116,29 @@ double Drive::GetUnfilteredVelocity() {
 
 }
 
-frc::DifferentialDriveWheelSpeeds Drive::GetWheelSpeeds(frc::ChassisSpeeds chs_spd) {
+void Drive::VelocityDrive(units::meters_per_second_t speed, DriveConstants::Side side) {
 
-    // return the result of converting the chassis speed info into individual wheel speed info
-    return drive_kinematics.ToWheelSpeeds(chs_spd);
+    if (side == DriveConstants::Side::left) {
+
+        this->left_talon.Set(ControlMode::Velocity, speed.value());
+
+    }
+    else {
+
+        this->right_talon.Set(ControlMode::Velocity, speed.value());
+
+    }
+
+}
+
+frc::DifferentialDriveWheelSpeeds Drive::GetWheelSpeeds(void) {
+
+    frc::DifferentialDriveWheelSpeeds wheel_speeds;
+
+    wheel_speeds.left = this->GetVelocity(DriveConstants::Side::left);
+    wheel_speeds.right = this->GetVelocity(DriveConstants::Side::right);
+
+    return wheel_speeds;
 
 }
 
@@ -142,4 +172,52 @@ void Drive::ArcadeDrive(double forward, double rotate) {
     // call arcade drive on DifferentialDrive object
     drive.ArcadeDrive(forward, rotate);
 
+<<<<<<< Updated upstream
+=======
+}
+
+void Drive::GetTiltAngles(double* tiltAngles) {
+
+    this->pigeon_imu.GetAccelerometerAngles(tiltAngles);
+
+}
+
+void Drive::ToggleBalance() {
+
+    this->balance_active = !this->balance_active;
+
+}
+
+bool Drive::GetBalanceActive() {
+
+    return this->balance_active;
+
+}
+
+units::meter_t Drive::GetEncoderPosition(DriveConstants::Side side) {
+
+    if (side == DriveConstants::Side::left) {
+
+        return units::meter_t( this->left_talon.GetSelectedSensorPosition() );
+
+    }
+    else {
+
+        return units::meter_t{ this->right_talon.GetSelectedSensorPosition() };
+
+    }
+
+}
+
+frc::Pose2d Drive::GetPose(void) {
+
+    return this->m_odometry.GetPose();
+
+}
+
+frc::DifferentialDriveKinematics Drive::GetKinematics(void) {
+
+    return this->drive_kinematics;
+
+>>>>>>> Stashed changes
 }

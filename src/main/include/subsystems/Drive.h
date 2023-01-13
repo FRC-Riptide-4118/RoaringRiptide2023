@@ -15,6 +15,9 @@
 #include <frc/kinematics/ChassisSpeeds.h>
 #include <frc/ADXRS450_Gyro.h>
 #include <frc/shuffleboard/Shuffleboard.h>
+#include <frc/kinematics/DifferentialDriveOdometry.h>
+#include <frc/geometry/Rotation2d.h>
+#include <frc/geometry/Pose2d.h>
 // CTRE/Phoenix include
 #include "ctre/Phoenix.h"
 // all other includes
@@ -35,19 +38,32 @@ class Drive : public frc2::SubsystemBase {
   // ResetEncoder will set both left and right encoders to 0
   void ResetEncoder();
   // Get the current (filtered) velocity
-  double GetVelocity();
+  units::meters_per_second_t GetVelocity(DriveConstants::Side side);
   // Get the current left talon encoder count
   double GetPosition();
   // Reset the gyroscope angle
   void ResetAngle();
   // Get the current gyroscope angle
   double GetAngle();
+  void VelocityDrive(units::meters_per_second_t speed, DriveConstants::Side side);
   // Get the current (unfiltered) velocity
   double GetUnfilteredVelocity();
   // Get wheel speeds from drive kinematics definition (convert linear + angular velocity of chassis into left + right velocity)
-  frc::DifferentialDriveWheelSpeeds GetWheelSpeeds(frc::ChassisSpeeds chs_spd);
+  frc::DifferentialDriveWheelSpeeds GetWheelSpeeds(void);
   // DriveToDistance will use PID control and encoders to drive a specific distance in a straight line
   void DriveToDistance(double setpoint);
+<<<<<<< Updated upstream
+=======
+  // Get tilt angles from Pigeon IMU accelerometer
+  void GetTiltAngles(double* tiltAngles);
+  // Toggle balance variable
+  void ToggleBalance();
+  // Get balance variable
+  bool GetBalanceActive();
+  frc::Pose2d GetPose(void);
+  frc::DifferentialDriveKinematics GetKinematics(void);
+  units::meter_t GetEncoderPosition(DriveConstants::Side side);
+>>>>>>> Stashed changes
 
  private:
   // All of the left motor controllers are defined here
@@ -66,11 +82,11 @@ class Drive : public frc2::SubsystemBase {
   // DifferentialDrive kinematics object
   frc::DifferentialDriveKinematics drive_kinematics{DriveConstants::track_width};
   // Filter for retrieving encoder information
-  frc::LinearFilter<double> encoder_filter = frc::LinearFilter<double>::SinglePoleIIR(DriveConstants::encoder_filter_cutoff_frequency, ROBORIO_LOOP_PERIOD);
   // gyroscope sensor
   frc::ADXRS450_Gyro gyroscope;
   // network tables pointer
   std::shared_ptr<nt::NetworkTable> table = nt::NetworkTableInstance::GetDefault().GetTable("drive");
 
+  frc::DifferentialDriveOdometry m_odometry;
 
 };

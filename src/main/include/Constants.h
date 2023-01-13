@@ -15,6 +15,7 @@
  * they are needed.
  */
 #include <units/length.h>
+#include <units/angle.h>
 #include "user_defined/PID_Coefficients.h"
 
 #define CURVATURE_DRIVE_MODE 0
@@ -26,19 +27,23 @@
 namespace DriveConstants {
 
     // left motor controller IDs
-    const int left_talon_id = 1;
+    const int left_talon_id = 0;
     const int left_victor1_id = 2;
-    const int left_victor2_id = 3;
+    const int left_victor2_id = 6;
 
     // right motor controller IDs
-    const int right_talon_id = 0;
-    const int right_victor1_id = 4;
-    const int right_victor2_id = 5;
+    const int right_talon_id = 3;
+    const int right_victor1_id = 5;
+    const int right_victor2_id = 7;
 
     // drive PID coefficients
     const PID_Coefficients drive_PID_coefficients(0, 0.1, 2.0e-5, 0);
     const PID_Coefficients gyro_PID_coefficients(0, 0.008333, 0, 0);
     const PID_Coefficients limelight_PID_coefficients(0, 0.035, 2.0e-5, 0);
+<<<<<<< Updated upstream
+=======
+    const PID_Coefficients balance_coefficients(0, 0.01, 0, 0);
+>>>>>>> Stashed changes
 
     // control drive mode (either curvature or arcade)
     const int drive_mode = ARCADE_DRIVE_MODE;
@@ -49,6 +54,21 @@ namespace DriveConstants {
 
     const int gyroscope_cs = 0;
 
+<<<<<<< Updated upstream
+=======
+    const int pigeon_id = 0;
+
+    const double balanced_angle = 0.0;
+    enum Axis {x=0, y=1, z=2};
+
+    const double exceed_angle = -45.0;
+
+    enum Side {left=0, right=1};
+
+    constexpr auto kRamseteB = 2.0 * 1_rad * 1_rad / (1_m * 1_m);
+    constexpr auto kRamseteZeta = 0.7 / 1_rad;
+
+>>>>>>> Stashed changes
 }
 
 // IntakeConstants is a location for all constants related to the Intake
