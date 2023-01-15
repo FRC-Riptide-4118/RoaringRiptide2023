@@ -9,19 +9,19 @@
 #include <frc2/command/SubsystemBase.h>
 #include <frc/motorcontrol/MotorControllerGroup.h>
 #include <frc/drive/DifferentialDrive.h>
-#include <frc/filter/LinearFilter.h>
 #include <frc/kinematics/DifferentialDriveKinematics.h>
 #include <frc/kinematics/DifferentialDriveWheelSpeeds.h>
 #include <frc/kinematics/ChassisSpeeds.h>
-#include <frc/ADXRS450_Gyro.h>
 #include <frc/shuffleboard/Shuffleboard.h>
 #include <frc/kinematics/DifferentialDriveOdometry.h>
 #include <frc/geometry/Rotation2d.h>
 #include <frc/geometry/Pose2d.h>
+#include <frc/smartdashboard/Field2d.h>
+#include <frc/smartdashboard/SmartDashboard.h>
 // CTRE/Phoenix include
-#include "ctre/Phoenix.h"
+#include <ctre/Phoenix.h>
 // all other includes
-#include "Constants.h"
+#include <Constants.h>
 
 // The Drive subsystem will represent an abstraction of the drivebase to allow for general robot mobility
 class Drive : public frc2::SubsystemBase {
@@ -40,7 +40,7 @@ class Drive : public frc2::SubsystemBase {
   // Get the current (filtered) velocity
   units::meters_per_second_t GetVelocity(DriveConstants::Side side);
   // Get the current left talon encoder count
-  double GetPosition();
+  units::meter_t GetPosition(DriveConstants::Side side);
   // Reset the gyroscope angle
   void ResetAngle();
   // Get the current gyroscope angle
@@ -52,8 +52,6 @@ class Drive : public frc2::SubsystemBase {
   frc::DifferentialDriveWheelSpeeds GetWheelSpeeds(void);
   // DriveToDistance will use PID control and encoders to drive a specific distance in a straight line
   void DriveToDistance(double setpoint);
-<<<<<<< Updated upstream
-=======
   // Get tilt angles from Pigeon IMU accelerometer
   void GetTiltAngles(double* tiltAngles);
   // Toggle balance variable
@@ -61,9 +59,10 @@ class Drive : public frc2::SubsystemBase {
   // Get balance variable
   bool GetBalanceActive();
   frc::Pose2d GetPose(void);
-  frc::DifferentialDriveKinematics GetKinematics(void);
-  units::meter_t GetEncoderPosition(DriveConstants::Side side);
->>>>>>> Stashed changes
+  void Reset(void);
+  void SetField(frc::Field2d* field);
+  void UpdateField(void);
+  void CreateOdomoetry(units::meter_t xpos, units::meter_t ypos, frc::Pose2d pose); 
 
  private:
   // All of the left motor controllers are defined here
@@ -80,13 +79,14 @@ class Drive : public frc2::SubsystemBase {
   // The MotorControllerGroups form a DifferentialDrive
   frc::DifferentialDrive drive{left, right};
   // DifferentialDrive kinematics object
-  frc::DifferentialDriveKinematics drive_kinematics{DriveConstants::track_width};
-  // Filter for retrieving encoder information
-  // gyroscope sensor
-  frc::ADXRS450_Gyro gyroscope;
+  
   // network tables pointer
-  std::shared_ptr<nt::NetworkTable> table = nt::NetworkTableInstance::GetDefault().GetTable("drive");
-
-  frc::DifferentialDriveOdometry m_odometry;
+  // std::shared_ptr<nt::NetworkTable> table = nt::NetworkTableInstance::GetDefault().GetTable("drive");
+  // IMU
+  ctre::phoenix::sensors::PigeonIMU pigeon_imu = {DriveConstants::pigeon_id};
+  // variable to keep track of whether or not to balance
+  bool balance_active;
+  frc::DifferentialDriveOdometry* m_odometry;
+  frc::Field2d* field;
 
 };

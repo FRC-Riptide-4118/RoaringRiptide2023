@@ -17,6 +17,7 @@
 #include <units/length.h>
 #include <units/angle.h>
 #include "user_defined/PID_Coefficients.h"
+#include <frc/kinematics/DifferentialDriveKinematics.h>
 
 #define CURVATURE_DRIVE_MODE 0
 #define ARCADE_DRIVE_MODE 1
@@ -37,25 +38,20 @@ namespace DriveConstants {
     const int right_victor2_id = 7;
 
     // drive PID coefficients
-    const PID_Coefficients drive_PID_coefficients(0, 0.1, 2.0e-5, 0);
+    const PID_Coefficients drive_PID_coefficients(0, 0.001, 0, 0);
     const PID_Coefficients gyro_PID_coefficients(0, 0.008333, 0, 0);
     const PID_Coefficients limelight_PID_coefficients(0, 0.035, 2.0e-5, 0);
-<<<<<<< Updated upstream
-=======
     const PID_Coefficients balance_coefficients(0, 0.01, 0, 0);
->>>>>>> Stashed changes
 
     // control drive mode (either curvature or arcade)
     const int drive_mode = ARCADE_DRIVE_MODE;
 
     const double encoder_filter_cutoff_frequency = 0.1;
 
-    const auto track_width = 30_in;
+    const auto track_width = 0.762_m;
 
     const int gyroscope_cs = 0;
 
-<<<<<<< Updated upstream
-=======
     const int pigeon_id = 0;
 
     const double balanced_angle = 0.0;
@@ -68,7 +64,20 @@ namespace DriveConstants {
     constexpr auto kRamseteB = 2.0 * 1_rad * 1_rad / (1_m * 1_m);
     constexpr auto kRamseteZeta = 0.7 / 1_rad;
 
->>>>>>> Stashed changes
+    const frc::DifferentialDriveKinematics kDriveKinematics{track_width};
+
+    constexpr auto wheel_diameter = 0.1524_m;
+    constexpr auto wheel_circumference = 3.14*wheel_diameter;
+
+    constexpr double ticks_per_rev = 30762.0;
+
+    constexpr auto meters_per_tick = wheel_circumference / ticks_per_rev;
+
+    const double deg_to_radian = 3.14/180;
+
+    constexpr auto kMaxSpeed = 4_mps;
+    constexpr auto kMaxAcceleration = 3_mps / 1_s;
+
 }
 
 // IntakeConstants is a location for all constants related to the Intake

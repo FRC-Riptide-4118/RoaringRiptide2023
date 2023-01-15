@@ -3,16 +3,16 @@
 // the WPILib BSD license file in the root directory of this project.
 
 // include the Drive subsystem
-#include "subsystems/Drive.h"
+#include <subsystems/Drive.h>
 
 // Drive constructor
-Drive::Drive() : 
-m_odometry{ frc::Rotation2d(units::degree_t(this->GetAngle())), units::meter_t(0.0), units::meter_t(0.0) }
-{
+Drive::Drive() {
 
-    this->table->PutNumber("kP", DriveConstants::drive_PID_coefficients.kP);
-    this->table->PutNumber("kI", DriveConstants::drive_PID_coefficients.kI);
-    this->table->PutNumber("kD", DriveConstants::drive_PID_coefficients.kD);
+
+    drive.SetSafetyEnabled(false);
+    // this->table->PutNumber("kP", DriveConstants::drive_PID_coefficients.kP);
+    // this->table->PutNumber("kI", DriveConstants::drive_PID_coefficients.kI);
+    // this->table->PutNumber("kD", DriveConstants::drive_PID_coefficients.kD);
 
     // Reset left/right talon information
     this->left_talon.ConfigFactoryDefault();
@@ -30,7 +30,6 @@ m_odometry{ frc::Rotation2d(units::degree_t(this->GetAngle())), units::meter_t(0
     this->right_victor2.Follow(this->right_talon);
 
     // disable safety to avoid weird errors
-    drive.SetSafetyEnabled(false);
     this->left_talon.ConfigSelectedFeedbackSensor(FeedbackDevice::QuadEncoder);
     this->right_talon.ConfigSelectedFeedbackSensor(FeedbackDevice::QuadEncoder);
 
@@ -58,15 +57,20 @@ m_odometry{ frc::Rotation2d(units::degree_t(this->GetAngle())), units::meter_t(0
     this->left_talon.SetSensorPhase(false);
     this->right_talon.SetSensorPhase(false);
 
+    this->Reset();
+
+    this->m_odometry = nullptr;
+
 }
 
 // This method will be called once per scheduler run
 // No implementation necessary
 void Drive::Periodic() {
 
-    frc::Rotation2d rotation{ units::degree_t(this->GetAngle()) };
-    m_odometry.Update(rotation, this->GetEncoderPosition(DriveConstants::Side::left), this->GetEncoderPosition(DriveConstants::Side::right));
-    
+    frc::Rotation2d rotation{ units::radian_t(this->GetAngle()*DriveConstants::deg_to_radian) };
+    this->m_odometry->Update(rotation, this->GetPosition(DriveConstants::Side::left), this->GetPosition(DriveConstants::Side::right));
+    this->UpdateField();
+
 }
 
 void Drive::ResetEncoder() {
@@ -81,20 +85,31 @@ units::meters_per_second_t Drive::GetVelocity(DriveConstants::Side side) {
 
     if (side == DriveConstants::Side::left) {
 
-        return units::meters_per_second_t( this->left_talon.GetSelectedSensorPosition() );
+        return units::meters_per_second_t( DriveConstants::meters_per_tick.value()*this->left_talon.GetSelectedSensorVelocity() );
 
     }
     else {
 
-        return units::meters_per_second_t{ this->right_talon.GetSelectedSensorPosition() };
+        return -units::meters_per_second_t{ DriveConstants::meters_per_tick.value()*this->right_talon.GetSelectedSensorVelocity() };
 
     }
 
 }
 
-double Drive::GetPosition() {
+units::meter_t Drive::GetPosition(DriveConstants::Side side) {
 
-    return this->left_talon.GetSelectedSensorPosition();
+    switch(side) {
+
+        case DriveConstants::Side::left:
+            return this->left_talon.GetSelectedSensorPosition()*DriveConstants::meters_per_tick;
+            break;
+        case DriveConstants::Side::right:
+            return -this->right_talon.GetSelectedSensorPosition()*DriveConstants::meters_per_tick;
+            break;
+        default:
+            return 0_m;
+
+    }
 
 }
 
@@ -120,12 +135,12 @@ void Drive::VelocityDrive(units::meters_per_second_t speed, DriveConstants::Side
 
     if (side == DriveConstants::Side::left) {
 
-        this->left_talon.Set(ControlMode::Velocity, speed.value());
+        this->left_talon.Set(ControlMode::Velocity, speed.value()/DriveConstants::meters_per_tick.value());
 
     }
     else {
 
-        this->right_talon.Set(ControlMode::Velocity, speed.value());
+        this->right_talon.Set(ControlMode::Velocity, -speed.value()/DriveConstants::meters_per_tick.value());
 
     }
 
@@ -144,6 +159,7 @@ frc::DifferentialDriveWheelSpeeds Drive::GetWheelSpeeds(void) {
 
 void Drive::DriveToDistance(double setpoint) {
 
+    /*
     // set left PID coefficients for motor controllers
     this->left_talon.Config_kF(0, table->GetNumber("kF", DriveConstants::drive_PID_coefficients.kF));
     this->left_talon.Config_kP(0, table->GetNumber("kP", DriveConstants::drive_PID_coefficients.kP));
@@ -158,6 +174,7 @@ void Drive::DriveToDistance(double setpoint) {
 
     this->left_talon.Set(ControlMode::Position, setpoint);
     this->right_talon.Set(ControlMode::Position, -setpoint);
+    */
 }
 
 void Drive::CurvatureDrive(double forward, double rotate) {
@@ -172,8 +189,6 @@ void Drive::ArcadeDrive(double forward, double rotate) {
     // call arcade drive on DifferentialDrive object
     drive.ArcadeDrive(forward, rotate);
 
-<<<<<<< Updated upstream
-=======
 }
 
 void Drive::GetTiltAngles(double* tiltAngles) {
@@ -194,30 +209,36 @@ bool Drive::GetBalanceActive() {
 
 }
 
-units::meter_t Drive::GetEncoderPosition(DriveConstants::Side side) {
-
-    if (side == DriveConstants::Side::left) {
-
-        return units::meter_t( this->left_talon.GetSelectedSensorPosition() );
-
-    }
-    else {
-
-        return units::meter_t{ this->right_talon.GetSelectedSensorPosition() };
-
-    }
-
-}
-
 frc::Pose2d Drive::GetPose(void) {
 
-    return this->m_odometry.GetPose();
+    return this->m_odometry->GetPose();
 
 }
 
-frc::DifferentialDriveKinematics Drive::GetKinematics(void) {
+void Drive::Reset(void) {
 
-    return this->drive_kinematics;
+    this->left_talon.SetSelectedSensorPosition(0);
+    this->right_talon.SetSelectedSensorPosition(0);
+    this->pigeon_imu.SetFusedHeading(0, 20);
 
->>>>>>> Stashed changes
+}
+
+void Drive::UpdateField(void) {
+
+    this->field->SetRobotPose(this->GetPose());
+
+}
+
+void Drive::SetField(frc::Field2d* field) {
+
+    this->field = field;
+
+}
+
+void Drive::CreateOdomoetry(units::meter_t xpos, units::meter_t ypos, frc::Pose2d pose) {
+
+    this->ResetEncoder();
+    if (this->m_odometry != nullptr) delete this->m_odometry;
+    this->m_odometry = new frc::DifferentialDriveOdometry{ units::radian_t(this->GetAngle()*DriveConstants::deg_to_radian), xpos, ypos, pose };
+
 }

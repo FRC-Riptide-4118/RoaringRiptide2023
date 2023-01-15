@@ -8,7 +8,6 @@
 // all frc/frc2 includes
 #include <frc2/command/CommandBase.h>
 #include <frc2/command/CommandHelper.h>
-#include <frc/filter/LinearFilter.h>
 // all subsystem includes
 #include <subsystems/Drive.h>
 
@@ -17,7 +16,7 @@ class DefaultDrive : public frc2::CommandHelper<frc2::CommandBase, DefaultDrive>
  
  public:
   // DefaultDrive constructor takes a pointer to a Drive subsystem and pointers to two functions that will return doubles representing a forward/rotate power
-  DefaultDrive(Drive* subsystem, std::function<double()> forward, std::function<double()> rotate);
+  DefaultDrive(Drive* drive, std::function<double()> forward, std::function<double()> rotate);
   // Execute will be called when the command is called
   void Execute() override;
 

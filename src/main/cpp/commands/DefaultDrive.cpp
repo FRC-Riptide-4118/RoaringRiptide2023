@@ -8,12 +8,12 @@
 DefaultDrive::DefaultDrive(Drive* drive, std::function<double()> forward, std::function<double()> rotate) {
   
   // initialize all local variables based on the provided arguments
-  m_drive = drive;
-  m_forward = forward;
-  m_rotate = rotate;
+  this->m_drive = drive;
+  this->m_forward = forward;
+  this->m_rotate = rotate;
 
   // the Drive subsystem is a requirement for this command
-  AddRequirements({m_drive});
+  AddRequirements( {drive} );
 
 }
 
