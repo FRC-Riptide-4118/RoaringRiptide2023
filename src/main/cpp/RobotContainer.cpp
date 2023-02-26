@@ -28,6 +28,9 @@ RobotContainer::RobotContainer() {
 void RobotContainer::ConfigureButtonBindings() {
 
   // x_button.ToggleOnTrue( BalanceDrive(&m_drive).ToPtr() );
+  right_bumper.ToggleOnTrue(&cone_toggle);
+  right_trigger.WhileTrue(&cube_in);
+  b_button.WhileTrue(&cube_out);
 
 }
 
@@ -35,9 +38,5 @@ frc2::Command* RobotContainer::GetAutonomousCommand() {
 
   // An example command will be run in autonomous
   return this->m_auto_chooser.GetSelected();
-
-}
-
-void RobotContainer::Reset(void) {
 
 }

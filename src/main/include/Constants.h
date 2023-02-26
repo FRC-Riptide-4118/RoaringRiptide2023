@@ -80,54 +80,29 @@ namespace DriveConstants {
 
 }
 
-// IntakeConstants is a location for all constants related to the Intake
-namespace IntakeConstants {
+// GripperConstants is a location for all constants related to the Gripper
+namespace GripperConstants {
 
-    const int motor_controller_id = 6;
-    const int PCM_intake_arm_forward = 6;
-    const int PCM_intake_arm_reverse = 7;
+    const int gripper_motor_id = 6;
+    const int PCM_grip = 6;
+    const int PCM_release = 7;
 
-    const double intake_speed = 0.75;
-
-}
-
-// TransferConstants is a location for all constants related to the Transfer
-namespace TransferConstants {
-
-    const int motor_controller_id = 7;
-
-    const double transfer_speed = 0.40;
+    const double gripper_speed = 0.25;
 
 }
 
-namespace LauncherConstants {
+// ArmConstants is a location for all constants related to the Arm
+namespace ArmConstants {
 
-    const int motor_controller_id = 8;
-    const PID_Coefficients launcher_PID_coefficients(0, 0.0025, 0.0001, 0);
+    const int shoulder_left_motor_id = 7;
+    const int shoulder_right_motor_id = 8;
+    const int elbow_left_motor_id = 9;
+    const int elbow_right_motor_id = 10;
+    const int wrist_motor_id = 11;
 
-    const double setpoint = 15000;
-
-}
-
-namespace ClimberConstants {
-
-    const int left_climber_motor_id = 0;
-    const int right_climber_motor_id = 1;
-
-    const int top_left_limit_switch_port = 1;
-    const int bottom_left_limit_switch_port = 3;
-    const int top_right_limit_switch_port = 0;
-    const int bottom_right_limit_switch_port = 2;
-    
-
-    const int left_servo_port = 9;
-    const int right_servo_port = 0;
-
-    const double servo_down_value = 0.5;
-    const double servo_up_value = 0;
-
-    const double climber_up_speed = 0.35;
-    const double climber_down_speed = 0.65;
+    const int shoulder_limit_port = 0;
+    const int elbow_limit_port = 1;
+    const int wrist_limit_port = 2;
 
 }
 

@@ -26,11 +26,15 @@
 
 // --- SUBSYSTEMS --- //
 #include <subsystems/Drive.h>
+#include <subsystems/Gripper.h>
+#include <subsystems/Arm.h>
 
 // --- COMMANDS -- //
 #include <commands/DefaultDrive.h>
+#include <commands/DefaultGripper.h>
 
 // --- OTHER --- //
+#include <Constants.h>
 
 /**
  * This class is where the bulk of the robot should be declared.  Since
@@ -45,8 +49,6 @@ class RobotContainer {
 
   frc2::Command* GetAutonomousCommand();
 
-  void Reset(void);
-
  private:
 
   frc::SendableChooser<frc2::Command*> m_auto_chooser;
@@ -60,14 +62,29 @@ class RobotContainer {
 
   Drive m_drive;
 
+  Gripper m_gripper;
+
   /* ----- SIMPLE COMMAND DECALARATIONS ---- */
+
+  // [GRIPPER]
+  frc2::InstantCommand cone_toggle{ [this] {m_gripper.ConeToggle();}, {&m_gripper}};
+  frc2::InstantCommand cone_grab{[this] {m_gripper.ConeGrab();}, {&m_gripper}};
+  frc2::InstantCommand cone_release{[this] {m_gripper.ConeRelease();}, {&m_gripper}};
+  frc2::RunCommand cube_in{[this] {m_gripper.CubeIn();}, {&m_gripper}};
+  frc2::RunCommand cube_out{[this] {m_gripper.CubeOut();}, {&m_gripper}};
 
   /* ------ CONTROLLER/BUTTON DECLARATIONS ---- */
 
   frc2::CommandXboxController driver_controller{ControllerConstants::driver_controller_port};
 
+  frc2::Trigger right_bumper = driver_controller.RightBumper();
+  frc2::Trigger left_bumper = driver_controller.LeftBumper();
+  frc2::Trigger right_trigger = driver_controller.RightTrigger();
+  frc2::Trigger left_trigger = driver_controller.LeftTrigger();
   frc2::Trigger x_button = driver_controller.X();
   frc2::Trigger y_button = driver_controller.Y();
+  frc2::Trigger a_button = driver_controller.A();
+  frc2::Trigger b_button = driver_controller.B();
 
   void ConfigureButtonBindings();
 
