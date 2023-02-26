@@ -20,6 +20,8 @@
 #include <frc/smartdashboard/SmartDashboard.h>
 // CTRE/Phoenix include
 #include <ctre/Phoenix.h>
+//REV Include
+#include <rev/CANSparkMax.h>
 // all other includes
 #include <Constants.h>
 
@@ -35,58 +37,31 @@ class Drive : public frc2::SubsystemBase {
   void CurvatureDrive(double forward, double rotate);
   // Arcade drive implementation
   void ArcadeDrive(double forward, double rotate);
-  // ResetEncoder will set both left and right encoders to 0
-  void ResetEncoder();
-  // Get the current (filtered) velocity
-  units::meters_per_second_t GetVelocity(DriveConstants::Side side);
-  // Get the current left talon encoder count
-  units::meter_t GetPosition(DriveConstants::Side side);
-  // Reset the gyroscope angle
-  void ResetAngle();
-  // Get the current gyroscope angle
-  double GetAngle();
-  void VelocityDrive(units::meters_per_second_t speed, DriveConstants::Side side);
-  // Get the current (unfiltered) velocity
-  double GetUnfilteredVelocity();
-  // Get wheel speeds from drive kinematics definition (convert linear + angular velocity of chassis into left + right velocity)
-  frc::DifferentialDriveWheelSpeeds GetWheelSpeeds(void);
-  // DriveToDistance will use PID control and encoders to drive a specific distance in a straight line
-  void DriveToDistance(double setpoint);
-  // Get tilt angles from Pigeon IMU accelerometer
-  void GetTiltAngles(double* tiltAngles);
-  // Toggle balance variable
-  void ToggleBalance();
-  // Get balance variable
-  bool GetBalanceActive();
-  frc::Pose2d GetPose(void);
-  void Reset(void);
+  double GetRawEncoderVelocity(DriveConstants::Side side);
+  double GetRawEncoderPosition(DriveConstants::Side side);
+  units::meter_t GetEncoderPositionMeters(DriveConstants::Side side);
+  double GetHeading();
+  void CreateOdometry(units::meter_t xpos, units::meter_t ypos, frc::Pose2d pose);
   void SetField(frc::Field2d* field);
-  void UpdateField(void);
-  void CreateOdomoetry(units::meter_t xpos, units::meter_t ypos, frc::Pose2d pose); 
 
  private:
   // All of the left motor controllers are defined here
-  WPI_TalonSRX left_talon = {DriveConstants::left_talon_id};
-  WPI_VictorSPX left_victor1 = {DriveConstants::left_victor1_id};
-  WPI_VictorSPX left_victor2 = {DriveConstants::left_victor2_id};
-  // All of the right motor controllers are declared here
-  WPI_TalonSRX right_talon = {DriveConstants::right_talon_id};
-  WPI_VictorSPX right_victor1 = {DriveConstants::right_victor1_id};
-  WPI_VictorSPX right_victor2 = {DriveConstants::right_victor2_id};
-  // The left and right motor controllers are turned into SpeedControllerGroups
-  frc::MotorControllerGroup left{left_talon, left_victor1, left_victor2};
-  frc::MotorControllerGroup right{right_talon, right_victor1, right_victor2};
-  // The MotorControllerGroups form a DifferentialDrive
-  frc::DifferentialDrive drive{left, right};
-  // DifferentialDrive kinematics object
-  
-  // network tables pointer
-  // std::shared_ptr<nt::NetworkTable> table = nt::NetworkTableInstance::GetDefault().GetTable("drive");
-  // IMU
+  rev::CANSparkMax left_spark0{DriveConstants::left_spark0, rev::CANSparkMax::MotorType::kBrushless};
+  rev::CANSparkMax left_spark1{DriveConstants::left_spark1, rev::CANSparkMax::MotorType::kBrushless};
+  rev::CANSparkMax left_spark2{DriveConstants::left_spark2, rev::CANSparkMax::MotorType::kBrushless};
+  rev::CANSparkMax right_spark0{DriveConstants::right_spark0, rev::CANSparkMax::MotorType::kBrushless};
+  rev::CANSparkMax right_spark1{DriveConstants::right_spark1, rev::CANSparkMax::MotorType::kBrushless};
+  rev::CANSparkMax right_spark2{DriveConstants::right_spark2, rev::CANSparkMax::MotorType::kBrushless};
+
+  rev::SparkMaxRelativeEncoder left_encoder{left_spark0.GetEncoder()};
+  rev::SparkMaxRelativeEncoder right_encoder{right_spark0.GetEncoder()};
+
   ctre::phoenix::sensors::PigeonIMU pigeon_imu = {DriveConstants::pigeon_id};
-  // variable to keep track of whether or not to balance
-  bool balance_active;
-  frc::DifferentialDriveOdometry* m_odometry;
+
+  // The MotorControllerGroups form a DifferentialDrive
+  frc::DifferentialDrive drive{left_spark0, right_spark0};
+
+  frc::DifferentialDriveOdometry* odometry;
   frc::Field2d* field;
 
 };

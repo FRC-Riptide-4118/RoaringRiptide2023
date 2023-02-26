@@ -29,8 +29,6 @@
 
 // --- COMMANDS -- //
 #include <commands/DefaultDrive.h>
-#include <commands/BalanceDrive.h>
-#include <commands/DriveToRamp.h>
 
 // --- OTHER --- //
 
@@ -53,52 +51,16 @@ class RobotContainer {
 
   frc::SendableChooser<frc2::Command*> m_auto_chooser;
 
-  fs::path deployDirectory{frc::filesystem::GetDeployDirectory() + "/paths" + "/test.wpilib.json"}; 
+  fs::path deployDirectory{frc::filesystem::GetDeployDirectory() + "/paths" + "/straight.wpilib.json"}; 
   frc::Trajectory test_trajectory{frc::TrajectoryUtil::FromPathweaverJson(deployDirectory.string())};
 
-  fs::path deployDirectory2{frc::filesystem::GetDeployDirectory() + "/paths" + "/straight.wpilib.json"}; 
-  frc::Trajectory test_trajectory2{frc::TrajectoryUtil::FromPathweaverJson(deployDirectory2.string())};
-
-  frc::Field2d m_field;
-
   /* ----- SUBSYSTEM DECALARATIONS ----- */
+
+  frc::Field2d field;
 
   Drive m_drive;
 
   /* ----- SIMPLE COMMAND DECALARATIONS ---- */
-
-  frc2::InstantCommand toggle_balance{ [this] { m_drive.ToggleBalance(); }, {&m_drive} };
-  frc2::InstantCommand reset_drive{ [this] { m_drive.Reset(); }, {&m_drive} };
-
-  frc2::RunCommand run_to_speed{ [this] { m_drive.VelocityDrive(10000_mps, DriveConstants::Side::left); m_drive.VelocityDrive(10000_mps, DriveConstants::Side::right); } };
-
-  /* ----- AUTO DECLARATIONS ---- */
-
-  frc2::Command* m_autonomousCommand;
-
-  frc2::SequentialCommandGroup balance_auto{
-
-    DriveToRamp(&m_drive),
-    BalanceDrive(&m_drive)
-
-  };
-
-  frc2::RamseteCommand ramsete_path_track{
-
-    // trajectory [x]
-    test_trajectory2,
-    // pose [x]
-    [this] { return this->m_drive.GetPose(); },
-    // controller
-    frc::RamseteController{DriveConstants::kRamseteB, DriveConstants::kRamseteZeta},
-    // kinematics
-    frc::DifferentialDriveKinematics{DriveConstants::track_width},
-    // output [x]
-    [this](units::meters_per_second_t left_speed, units::meters_per_second_t right_speed) { this->m_drive.VelocityDrive(left_speed, DriveConstants::Side::left); this->m_drive.VelocityDrive(right_speed, DriveConstants::Side::right); },
-    // requirements [x]
-    { &this->m_drive }
-
-  };
 
   /* ------ CONTROLLER/BUTTON DECLARATIONS ---- */
 
@@ -106,7 +68,6 @@ class RobotContainer {
 
   frc2::Trigger x_button = driver_controller.X();
   frc2::Trigger y_button = driver_controller.Y();
-
 
   void ConfigureButtonBindings();
 

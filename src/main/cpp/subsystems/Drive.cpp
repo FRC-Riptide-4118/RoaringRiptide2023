@@ -8,179 +8,22 @@
 // Drive constructor
 Drive::Drive() {
 
-
     drive.SetSafetyEnabled(false);
-    // this->table->PutNumber("kP", DriveConstants::drive_PID_coefficients.kP);
-    // this->table->PutNumber("kI", DriveConstants::drive_PID_coefficients.kI);
-    // this->table->PutNumber("kD", DriveConstants::drive_PID_coefficients.kD);
 
-    // Reset left/right talon information
-    this->left_talon.ConfigFactoryDefault();
-    this->right_talon.ConfigFactoryDefault();
+    left_spark1.Follow(left_spark0);
+    left_spark2.Follow(left_spark0);
 
-    // As of 2022, DifferentialDrive no longer automatically inverts direction
-    left.SetInverted(true);
-
-    // left motor controllers always follow this->left_talon
-    this->left_victor1.Follow(this->left_talon);
-    this->left_victor2.Follow(this->left_talon);
-
-    // right motor controllers always follow this->right_talon
-    this->right_victor1.Follow(this->right_talon);
-    this->right_victor2.Follow(this->right_talon);
-
-    // disable safety to avoid weird errors
-    this->left_talon.ConfigSelectedFeedbackSensor(FeedbackDevice::QuadEncoder);
-    this->right_talon.ConfigSelectedFeedbackSensor(FeedbackDevice::QuadEncoder);
-
-    // set the current encoder value to 0
-    this->left_talon.SetSelectedSensorPosition(0);
-    this->right_talon.SetSelectedSensorPosition(0);
-
-    // limit acceleration to avoid brownouts
-    // this->left_talon.ConfigOpenloopRamp(2.8);
-    // this->right_talon.ConfigOpenloopRamp(2.8);
-
-    // set left PID coefficients for motor controllers
-    this->left_talon.Config_kF(0, DriveConstants::drive_PID_coefficients.kF);
-    this->left_talon.Config_kP(0, DriveConstants::drive_PID_coefficients.kP);
-    this->left_talon.Config_kI(0, DriveConstants::drive_PID_coefficients.kI);
-    this->left_talon.Config_kD(0, DriveConstants::drive_PID_coefficients.kD);
-
-    // set right PID coefficients for motor controllers
-    this->right_talon.Config_kF(0, DriveConstants::drive_PID_coefficients.kF);
-    this->right_talon.Config_kP(0, DriveConstants::drive_PID_coefficients.kP);
-    this->right_talon.Config_kI(0, DriveConstants::drive_PID_coefficients.kI);
-    this->right_talon.Config_kD(0, DriveConstants::drive_PID_coefficients.kD);
-
-    // disable sensor phase sensing
-    this->left_talon.SetSensorPhase(false);
-    this->right_talon.SetSensorPhase(false);
-
-    this->Reset();
-
-    this->m_odometry = nullptr;
+    right_spark1.Follow(right_spark0);
+    right_spark2.Follow(right_spark0);
 
 }
 
 // This method will be called once per scheduler run
-// No implementation necessary
 void Drive::Periodic() {
 
-    frc::Rotation2d rotation{ units::radian_t(this->GetAngle()*DriveConstants::deg_to_radian) };
-    this->m_odometry->Update(rotation, this->GetPosition(DriveConstants::Side::left), this->GetPosition(DriveConstants::Side::right));
-    this->UpdateField();
-
-}
-
-void Drive::ResetEncoder() {
-
-    // reset encoders to position 0
-    this->left_talon.SetSelectedSensorPosition(0);
-    this->right_talon.SetSelectedSensorPosition(0);
-
-}
-
-units::meters_per_second_t Drive::GetVelocity(DriveConstants::Side side) {
-
-    if (side == DriveConstants::Side::left) {
-
-        return units::meters_per_second_t( DriveConstants::meters_per_tick.value()*this->left_talon.GetSelectedSensorVelocity() );
-
-    }
-    else {
-
-        return -units::meters_per_second_t{ DriveConstants::meters_per_tick.value()*this->right_talon.GetSelectedSensorVelocity() };
-
-    }
-
-}
-
-units::meter_t Drive::GetPosition(DriveConstants::Side side) {
-
-    switch(side) {
-
-        case DriveConstants::Side::left:
-            return this->left_talon.GetSelectedSensorPosition()*DriveConstants::meters_per_tick;
-            break;
-        case DriveConstants::Side::right:
-            return -this->right_talon.GetSelectedSensorPosition()*DriveConstants::meters_per_tick;
-            break;
-        default:
-            return 0_m;
-
-    }
-
-}
-
-void Drive::ResetAngle() {
-
-    return;
-
-}
-
-double Drive::GetAngle() {
-
-    return this->pigeon_imu.GetFusedHeading();
-
-}
-
-double Drive::GetUnfilteredVelocity() {
-
-    return this->left_talon.GetSelectedSensorVelocity();
-
-}
-
-void Drive::VelocityDrive(units::meters_per_second_t speed, DriveConstants::Side side) {
-
-    if (side == DriveConstants::Side::left) {
-
-        this->left_talon.Set(ControlMode::Velocity, speed.value()/DriveConstants::meters_per_tick.value());
-
-    }
-    else {
-
-        this->right_talon.Set(ControlMode::Velocity, -speed.value()/DriveConstants::meters_per_tick.value());
-
-    }
-
-}
-
-frc::DifferentialDriveWheelSpeeds Drive::GetWheelSpeeds(void) {
-
-    frc::DifferentialDriveWheelSpeeds wheel_speeds;
-
-    wheel_speeds.left = this->GetVelocity(DriveConstants::Side::left);
-    wheel_speeds.right = this->GetVelocity(DriveConstants::Side::right);
-
-    return wheel_speeds;
-
-}
-
-void Drive::DriveToDistance(double setpoint) {
-
-    /*
-    // set left PID coefficients for motor controllers
-    this->left_talon.Config_kF(0, table->GetNumber("kF", DriveConstants::drive_PID_coefficients.kF));
-    this->left_talon.Config_kP(0, table->GetNumber("kP", DriveConstants::drive_PID_coefficients.kP));
-    this->left_talon.Config_kI(0, table->GetNumber("kI", DriveConstants::drive_PID_coefficients.kI));
-    this->left_talon.Config_kD(0, table->GetNumber("kD", DriveConstants::drive_PID_coefficients.kD));
-
-    // set right PID coefficients for motor controllers
-    this->right_talon.Config_kF(0, table->GetNumber("kF", DriveConstants::drive_PID_coefficients.kF));
-    this->right_talon.Config_kP(0, table->GetNumber("kP", DriveConstants::drive_PID_coefficients.kP));
-    this->right_talon.Config_kI(0, table->GetNumber("kI", DriveConstants::drive_PID_coefficients.kI));
-    this->right_talon.Config_kD(0, table->GetNumber("kD", DriveConstants::drive_PID_coefficients.kD));
-
-    this->left_talon.Set(ControlMode::Position, setpoint);
-    this->right_talon.Set(ControlMode::Position, -setpoint);
-    */
-}
-
-void Drive::CurvatureDrive(double forward, double rotate) {
-
-    // call curvature drive on the DifferentialDrive object (with quick turn set to false)
-    drive.CurvatureDrive(forward, rotate, false);
+    frc::Rotation2d rotation{ units::radian_t(this->GetHeading()*DriveConstants::deg_to_radian) };
+    this->odometry->Update(rotation, this->GetEncoderPositionMeters(DriveConstants::Side::left), this->GetEncoderPositionMeters(DriveConstants::Side::right) );
+    this->field->SetRobotPose(this->odometry->GetPose());
 
 }
 
@@ -191,54 +34,89 @@ void Drive::ArcadeDrive(double forward, double rotate) {
 
 }
 
-void Drive::GetTiltAngles(double* tiltAngles) {
+void Drive::CurvatureDrive(double forward, double rotate) {
 
-    this->pigeon_imu.GetAccelerometerAngles(tiltAngles);
-
-}
-
-void Drive::ToggleBalance() {
-
-    this->balance_active = !this->balance_active;
+    // call curvature drive on the DifferentialDrive object (with quick turn set to false)
+    drive.CurvatureDrive(forward, rotate, false);
 
 }
 
-bool Drive::GetBalanceActive() {
+double Drive::GetRawEncoderVelocity(DriveConstants::Side side) {
 
-    return this->balance_active;
+    switch(side) {
+
+        case DriveConstants::Side::left:
+            return this->left_encoder.GetVelocity();
+            break;
+
+        case DriveConstants::Side::right:
+            return this->right_encoder.GetVelocity();
+            break;
+
+        default:
+            return 0;
+            break;
+
+    }
 
 }
 
-frc::Pose2d Drive::GetPose(void) {
+double Drive::GetRawEncoderPosition(DriveConstants::Side side) {
 
-    return this->m_odometry->GetPose();
+    switch(side) {
+
+        case DriveConstants::Side::left:
+            return this->left_encoder.GetPosition();
+            break;
+
+        case DriveConstants::Side::right:
+            return this->right_encoder.GetPosition();
+            break;
+
+        default:
+            return 0;
+            break;
+
+    }
 
 }
 
-void Drive::Reset(void) {
+units::meter_t Drive::GetEncoderPositionMeters(DriveConstants::Side side) {
 
-    this->left_talon.SetSelectedSensorPosition(0);
-    this->right_talon.SetSelectedSensorPosition(0);
-    this->pigeon_imu.SetFusedHeading(0, 20);
+    switch(side) {
+
+        case DriveConstants::Side::left:
+            return this->left_encoder.GetPosition()*DriveConstants::meters_per_tick;
+            break;
+
+        case DriveConstants::Side::right:
+            return this->right_encoder.GetPosition()*DriveConstants::meters_per_tick;
+            break;
+
+        default:
+            return 0_m;
+            break;
+
+    }
 
 }
 
-void Drive::UpdateField(void) {
+double Drive::GetHeading() {
 
-    this->field->SetRobotPose(this->GetPose());
+    return this->pigeon_imu.GetFusedHeading();
+
+}
+
+void Drive::CreateOdometry(units::meter_t xpos, units::meter_t ypos, frc::Pose2d pose) {
+
+    if (this->odometry != nullptr)
+        delete this->odometry;
+    this->odometry = new frc::DifferentialDriveOdometry{ units::radian_t(this->GetHeading()*DriveConstants::deg_to_radian), xpos, ypos, pose };
 
 }
 
 void Drive::SetField(frc::Field2d* field) {
 
     this->field = field;
-
-}
-
-void Drive::CreateOdomoetry(units::meter_t xpos, units::meter_t ypos, frc::Pose2d pose) {
-
-    this->ResetEncoder();
-    if (this->m_odometry != nullptr) delete this->m_odometry;
-    this->m_odometry = new frc::DifferentialDriveOdometry{ units::radian_t(this->GetAngle()*DriveConstants::deg_to_radian), xpos, ypos, pose };
 
 }

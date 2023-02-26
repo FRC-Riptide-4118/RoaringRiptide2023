@@ -28,14 +28,14 @@
 namespace DriveConstants {
 
     // left motor controller IDs
-    const int left_talon_id = 0;
-    const int left_victor1_id = 2;
-    const int left_victor2_id = 6;
+    const int left_spark0 = 0x25;
+    const int left_spark1 = 0x24;
+    const int left_spark2 = 0x23;
 
     // right motor controller IDs
-    const int right_talon_id = 3;
-    const int right_victor1_id = 5;
-    const int right_victor2_id = 7;
+    const int right_spark0 = 0x20;
+    const int right_spark1 = 0x21;
+    const int right_spark2 = 0x22;
 
     // drive PID coefficients
     const PID_Coefficients drive_PID_coefficients(0, 0.001, 0, 0);
@@ -69,7 +69,7 @@ namespace DriveConstants {
     constexpr auto wheel_diameter = 0.1524_m;
     constexpr auto wheel_circumference = 3.14*wheel_diameter;
 
-    constexpr double ticks_per_rev = 30762.0;
+    constexpr double ticks_per_rev = 8;
 
     constexpr auto meters_per_tick = wheel_circumference / ticks_per_rev;
 
