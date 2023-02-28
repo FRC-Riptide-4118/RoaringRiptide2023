@@ -73,6 +73,9 @@ class RobotContainer {
   frc2::RunCommand cube_in{[this] {m_gripper.CubeIn();}, {&m_gripper}};
   frc2::RunCommand cube_out{[this] {m_gripper.CubeOut();}, {&m_gripper}};
 
+  // [ARM]
+  
+
   /* ------ CONTROLLER/BUTTON DECLARATIONS ---- */
 
   frc2::CommandXboxController driver_controller{ControllerConstants::driver_controller_port};
