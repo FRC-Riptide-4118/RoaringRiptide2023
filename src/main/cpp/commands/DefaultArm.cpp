@@ -4,15 +4,24 @@
 
 #include "commands/DefaultArm.h"
 
-DefaultArm::DefaultArm() {
+DefaultArm::DefaultArm(Arm* arm) {
   // Use addRequirements() here to declare subsystem dependencies.
+  this->m_arm = arm;
+  AddRequirements( {arm} );
+
 }
 
 // Called when the command is initially scheduled.
 void DefaultArm::Initialize() {}
 
 // Called repeatedly when this Command is scheduled to run
-void DefaultArm::Execute() {}
+void DefaultArm::Execute() {
+
+  this->m_arm->RunJointToPower(ArmConstants::ArmJoint::shoulder, 0);
+  this->m_arm->RunJointToPower(ArmConstants::ArmJoint::elbow, 0);
+  this->m_arm->RunJointToPower(ArmConstants::ArmJoint::wrist, 0);
+
+}
 
 // Called once the command ends or is interrupted.
 void DefaultArm::End(bool interrupted) {}

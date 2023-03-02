@@ -15,16 +15,22 @@
  * directly; this is crucially important, or else the decorator functions in
  * Command will *not* work!
  */
-class DefaultArm
-    : public frc2::CommandHelper<frc2::CommandBase, DefaultArm> {
+class DriveArm
+    : public frc2::CommandHelper<frc2::CommandBase, DriveArm> {
  public:
-  DefaultArm(Arm* arm);
+  DriveArm(Arm* arm, std::function<double()> tool_x_velocity, std::function<double()> tool_y_velocity);
+
   void Initialize() override;
+
   void Execute() override;
+
   void End(bool interrupted) override;
+
   bool IsFinished() override;
 
  private:
   Arm* m_arm;
-
+  std::function<double()> tool_x_velocity;
+  std::function<double()> tool_y_velocity;
+  
 };

@@ -104,6 +104,14 @@ namespace ArmConstants {
     const int elbow_limit_port = 1;
     const int wrist_limit_port = 2;
 
+    const double A1 = 25.0;
+    const double A2 = 16.0;
+    const double TOOL_DIST = 6.5;
+
+    const double SHOULDER_RAD_OFFSET = 0;
+    const double ELBOW_RAD_OFFSET = 0;
+    const double WRIST_RAD_OFFSET = 0;
+
     enum ArmJoint {shoulder=0, elbow=1, wrist=2};
     
 
