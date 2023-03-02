@@ -104,6 +104,9 @@ namespace ArmConstants {
     const int elbow_limit_port = 1;
     const int wrist_limit_port = 2;
 
+    enum ArmJoint {shoulder=0, elbow=1, wrist=2};
+    
+
 }
 
 // ControllerConstants is a location for all constants related to the XboxController
