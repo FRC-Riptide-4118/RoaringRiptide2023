@@ -16,6 +16,7 @@ class Arm : public frc2::SubsystemBase {
   
   double GetEncoderRawPosition(ArmConstants::ArmJoint arm_joint);
   double GetEncoderRawVelocity(ArmConstants::ArmJoint arm_joint);
+  bool GetLimitSwitch(ArmConstants::ArmLimitMag arm_joint);
   void RunJointToSpeed(ArmConstants::ArmJoint arm_joint, double setpoint);
   void RunJointToPower(ArmConstants::ArmJoint arm_joint, double setpoint);
   void CalcJointVelocities( double omega[3], double angles_rad[3], double tool_velocity[2], double omega_tool );

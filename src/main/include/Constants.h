@@ -113,6 +113,7 @@ namespace ArmConstants {
     const double WRIST_RAD_OFFSET = 0;
 
     enum ArmJoint {shoulder=0, elbow=1, wrist=2};
+    enum ArmLimitMag {shoulder_min=0, shoulder_max=1, elbow_min=2, elbow_max=3, wrist_min=4, wrist_max=5};
     
 
 }

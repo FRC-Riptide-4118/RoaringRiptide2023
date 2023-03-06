@@ -148,3 +148,9 @@ double Arm::CalcAngleRadFromEncoder(ArmConstants::ArmJoint arm_joint) {
     }
     
 }
+
+bool Arm::GetLimitSwitch(ArmConstants::ArmLimitMag arm_joint) {
+
+    if (arm_joint == ArmConstants::ArmJoint::shoulder && CalcAngleRadFromEncoder(arm_joint) >= )
+
+}
