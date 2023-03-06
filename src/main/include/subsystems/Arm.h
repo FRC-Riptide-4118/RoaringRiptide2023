@@ -14,12 +14,13 @@ class Arm : public frc2::SubsystemBase {
   Arm();
   void Periodic() override;
   
-  double GetEncoderRawPosition(ArmConstants::ArmJoint arm_joint);
+  double GetRawEncoderPosition(ArmConstants::ArmJoint arm_joint);
   double GetEncoderRawVelocity(ArmConstants::ArmJoint arm_joint);
   void RunJointToSpeed(ArmConstants::ArmJoint arm_joint, double setpoint);
   void RunJointToPower(ArmConstants::ArmJoint arm_joint, double setpoint);
   void CalcJointVelocities( double omega[3], double angles_rad[3], double tool_velocity[2], double omega_tool );
   double CalcAngleRadFromEncoder(ArmConstants::ArmJoint arm_joint);
+  bool GetLimitSwitch(ArmConstants::ArmJoint arm_joint);
 
  private:
   WPI_TalonSRX shoulder_left_motor = {ArmConstants::shoulder_left_motor_id};

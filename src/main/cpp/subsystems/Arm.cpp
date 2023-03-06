@@ -6,22 +6,54 @@
 
 Arm::Arm() {
 
+    this->shoulder_left_motor.ConfigFactoryDefault();
+    this->shoulder_right_motor.ConfigFactoryDefault();
+
+    this->elbow_left_motor.ConfigFactoryDefault();
+    this->elbow_right_motor.ConfigFactoryDefault();
+
+    this->wrist_motor.ConfigFactoryDefault();
+
+    this->shoulder_left_motor.Config_kF(0, ArmConstants::shoulder_pid.kF );
+    this->shoulder_left_motor.Config_kP(0, ArmConstants::shoulder_pid.kP );
+    this->shoulder_left_motor.Config_kI(0, ArmConstants::shoulder_pid.kI );
+    this->shoulder_left_motor.Config_kD(0, ArmConstants::shoulder_pid.kD );
+
+    this->elbow_left_motor.Config_kF(0, ArmConstants::elbow_pid.kF );
+    this->elbow_left_motor.Config_kP(0, ArmConstants::elbow_pid.kP );
+    this->elbow_left_motor.Config_kI(0, ArmConstants::elbow_pid.kI );
+    this->elbow_left_motor.Config_kD(0, ArmConstants::elbow_pid.kD );
+
+    this->wrist_motor.Config_kF(0, ArmConstants::wrist_pid.kF );
+    this->wrist_motor.Config_kP(0, ArmConstants::wrist_pid.kP );
+    this->wrist_motor.Config_kI(0, ArmConstants::wrist_pid.kI );
+    this->wrist_motor.Config_kD(0, ArmConstants::wrist_pid.kD );
+
     this->elbow_left_motor.ConfigSelectedFeedbackSensor(TalonFXFeedbackDevice::IntegratedSensor);
-    this->elbow_right_motor.ConfigSelectedFeedbackSensor(TalonFXFeedbackDevice::IntegratedSensor);
+    // this->elbow_right_motor.ConfigSelectedFeedbackSensor(TalonFXFeedbackDevice::IntegratedSensor);
+    this->elbow_right_motor.SetInverted(true);
+    this->elbow_right_motor.Follow(this->elbow_left_motor);
 
     this->shoulder_left_motor.ConfigSelectedFeedbackSensor(FeedbackDevice::QuadEncoder);
+    this->shoulder_right_motor.SetInverted(true);
+    this->shoulder_right_motor.Follow(this->shoulder_left_motor);
+
     this->wrist_motor.ConfigSelectedFeedbackSensor(FeedbackDevice::QuadEncoder);
+
+    this->wrist_motor.SetSelectedSensorPosition(0);
+    this->elbow_left_motor.SetSelectedSensorPosition(0);
+    this->shoulder_left_motor.SetSelectedSensorPosition(0);
 
 }
 
 void Arm::Periodic() {}
 
-double Arm::GetEncoderRawPosition(ArmConstants::ArmJoint arm_joint) {
+double Arm::GetRawEncoderPosition(ArmConstants::ArmJoint arm_joint) {
     
     switch(arm_joint) {
 
         case ArmConstants::ArmJoint::shoulder:
-            return this->shoulder_left_motor.GetSelectedSensorPosition();
+            return this->shoulder_left_motor.GetSelectedSensorPosition();   
 
         case ArmConstants::ArmJoint::elbow:
             return this->elbow_left_motor.GetSelectedSensorPosition();
@@ -137,14 +169,31 @@ double Arm::CalcAngleRadFromEncoder(ArmConstants::ArmJoint arm_joint) {
     switch(arm_joint) {
 
         case ArmConstants::ArmJoint::shoulder:
-            return this->GetEncoderRawPosition(arm_joint) + ArmConstants::SHOULDER_RAD_OFFSET;
+            return -this->GetRawEncoderPosition(arm_joint)/ArmConstants::SHOULDER_TICKS_PER_RADIAN + ArmConstants::SHOULDER_RAD_OFFSET;
 
         case ArmConstants::ArmJoint::elbow:
-            return this->GetEncoderRawPosition(arm_joint) + ArmConstants::ELBOW_RAD_OFFSET;
+            return this->GetRawEncoderPosition(arm_joint)/ArmConstants::ELBOW_TICKS_PER_RADIAN + ArmConstants::ELBOW_RAD_OFFSET;
 
         default:
-            return this->GetEncoderRawPosition(arm_joint) + ArmConstants::WRIST_RAD_OFFSET;
+            return -this->GetRawEncoderPosition(arm_joint)/ArmConstants::WRIST_TICKS_PER_RADIAN + ArmConstants::WRIST_RAD_OFFSET;
 
     }
     
+}
+
+bool Arm::GetLimitSwitch(ArmConstants::ArmJoint arm_joint) {
+
+    switch(arm_joint) {
+
+        case ArmConstants::ArmJoint::shoulder:
+            return !this->shoulder_limit.Get();
+
+        case ArmConstants::ArmJoint::elbow:
+            return !this->elbow_limit.Get();
+
+        default:
+            return !this->wrist_limit.Get();
+
+    }
+
 }

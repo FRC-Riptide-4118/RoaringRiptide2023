@@ -24,6 +24,8 @@
 
 #define ROBORIO_LOOP_PERIOD 0.02_s // corresponds to a frequency of 50Hz
 
+#define PI 3.14159
+
 // DriveConstants namespace is a location for all constants realted to the Drive subsystem
 namespace DriveConstants {
 
@@ -94,26 +96,33 @@ namespace GripperConstants {
 // ArmConstants is a location for all constants related to the Arm
 namespace ArmConstants {
 
-    const int shoulder_left_motor_id = 7;
+    const int shoulder_left_motor_id = 2;
     const int shoulder_right_motor_id = 8;
     const int elbow_left_motor_id = 9;
     const int elbow_right_motor_id = 10;
-    const int wrist_motor_id = 11;
+    const int wrist_motor_id = 1;
 
-    const int shoulder_limit_port = 0;
-    const int elbow_limit_port = 1;
-    const int wrist_limit_port = 2;
+    const int shoulder_limit_port = 7;
+    const int elbow_limit_port = 8;
+    const int wrist_limit_port = 9;
 
-    const double A1 = 25.0;
-    const double A2 = 16.0;
+    const double A1 = 34.0;
+    const double A2 = 28.5;
     const double TOOL_DIST = 6.5;
 
-    const double SHOULDER_RAD_OFFSET = 0;
-    const double ELBOW_RAD_OFFSET = 0;
-    const double WRIST_RAD_OFFSET = 0;
+    const double SHOULDER_TICKS_PER_RADIAN = (1756.0/1.29);
+    const double ELBOW_TICKS_PER_RADIAN = (119682.0/2.81);
+    const double WRIST_TICKS_PER_RADIAN = (7594/2.53);
+
+    const double SHOULDER_RAD_OFFSET = (3.0/4.0)*PI;
+    const double ELBOW_RAD_OFFSET = (200.0/180.0)*PI;
+    const double WRIST_RAD_OFFSET = (130.0/180.0)*PI;
+
+    const PID_Coefficients shoulder_pid(0, 0.01, 0, 0);
+    const PID_Coefficients elbow_pid(0, 0.01, 0, 0);
+    const PID_Coefficients wrist_pid(0, 0.01, 0, 0);
 
     enum ArmJoint {shoulder=0, elbow=1, wrist=2};
-    
 
 }
 
@@ -122,5 +131,7 @@ namespace ControllerConstants {
 
     // the primary Xbox controller is connected on port 0
     const int driver_controller_port = 0;
+    // the secondary arm driver port
+    const int arm_controller_port = 1;
 
 }

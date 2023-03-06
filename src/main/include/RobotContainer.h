@@ -32,6 +32,8 @@
 // --- COMMANDS -- //
 #include <commands/DefaultDrive.h>
 #include <commands/DefaultGripper.h>
+#include <commands/DefaultArm.h>
+#include <commands/DriveArm.h>
 
 // --- OTHER --- //
 #include <Constants.h>
@@ -64,6 +66,8 @@ class RobotContainer {
 
   Gripper m_gripper;
 
+  Arm m_arm;
+
   /* ----- SIMPLE COMMAND DECALARATIONS ---- */
 
   // [GRIPPER]
@@ -74,11 +78,11 @@ class RobotContainer {
   frc2::RunCommand cube_out{[this] {m_gripper.CubeOut();}, {&m_gripper}};
 
   // [ARM]
-  
 
   /* ------ CONTROLLER/BUTTON DECLARATIONS ---- */
 
   frc2::CommandXboxController driver_controller{ControllerConstants::driver_controller_port};
+  frc2::CommandXboxController arm_controller{ControllerConstants::arm_controller_port};
 
   frc2::Trigger right_bumper = driver_controller.RightBumper();
   frc2::Trigger left_bumper = driver_controller.LeftBumper();

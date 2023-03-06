@@ -16,9 +16,26 @@ RobotContainer::RobotContainer() {
   frc::Shuffleboard::GetTab("Game").AddNumber("right velocity", [this] { return m_drive.GetRawEncoderVelocity(DriveConstants::Side::right); } );
   frc::Shuffleboard::GetTab("Game").AddNumber("left position", [this] { return m_drive.GetRawEncoderPosition(DriveConstants::Side::left); } );
   frc::Shuffleboard::GetTab("Game").AddNumber("right position", [this] { return m_drive.GetRawEncoderPosition(DriveConstants::Side::right); } );
+  
+  frc::Shuffleboard::GetTab("Game").AddNumber("shoulder encoder", [this] { return m_arm.GetRawEncoderPosition(ArmConstants::ArmJoint::shoulder); } );
+  frc::Shuffleboard::GetTab("Game").AddNumber("elbow encoder", [this] { return m_arm.GetRawEncoderPosition(ArmConstants::ArmJoint::elbow); } );
+  frc::Shuffleboard::GetTab("Game").AddNumber("wrist encoder", [this] { return m_arm.GetRawEncoderPosition(ArmConstants::ArmJoint::wrist); } );
+  
+  frc::Shuffleboard::GetTab("Game").AddNumber("shoulder limit", [this] { return m_arm.GetLimitSwitch(ArmConstants::ArmJoint::shoulder); } );
+  frc::Shuffleboard::GetTab("Game").AddNumber("elbow limit", [this] { return m_arm.GetLimitSwitch(ArmConstants::ArmJoint::elbow); } );
+  frc::Shuffleboard::GetTab("Game").AddNumber("wrist limit", [this] { return m_arm.GetLimitSwitch(ArmConstants::ArmJoint::wrist); } );
+
+  frc::Shuffleboard::GetTab("Game").AddNumber("shoulder angle", [this] { return m_arm.CalcAngleRadFromEncoder(ArmConstants::ArmJoint::shoulder); } );
+  frc::Shuffleboard::GetTab("Game").AddNumber("elbow angle", [this] { return m_arm.CalcAngleRadFromEncoder(ArmConstants::ArmJoint::elbow); } );
+  frc::Shuffleboard::GetTab("Game").AddNumber("wrist angle", [this] { return m_arm.CalcAngleRadFromEncoder(ArmConstants::ArmJoint::wrist); } );
+
+  frc::Shuffleboard::GetTab("Game").AddNumber("arm x", [this] { return arm_controller.GetRightX(); } );
+  frc::Shuffleboard::GetTab("Game").AddNumber("arm y", [this] { return arm_controller.GetLeftY(); } );
+
 
   // Initialize all of your commands and subsystems here
-  m_drive.SetDefaultCommand( DefaultDrive{ &m_drive, [this] {return driver_controller.GetRightX(); }, [this] {return -driver_controller.GetLeftY(); } } );
+  m_drive.SetDefaultCommand( DefaultDrive{ &m_drive, [this] {return driver_controller.GetRightX(); }, [this] {return driver_controller.GetLeftY(); } } );
+  m_arm.SetDefaultCommand( DriveArm{ &m_arm, [this] {return 10*arm_controller.GetRightX();}, [this] {return 10*arm_controller.GetLeftY();} } );
 
   // Configure the button bindings
   ConfigureButtonBindings();
