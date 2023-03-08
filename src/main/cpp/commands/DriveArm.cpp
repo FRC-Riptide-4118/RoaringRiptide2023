@@ -19,6 +19,7 @@ void DriveArm::Initialize() {}
 // Called repeatedly when this Command is scheduled to run
 void DriveArm::Execute() {
 
+  /*
   double tool_velocity[2] = { this->tool_x_velocity(), this->tool_y_velocity() };
   double angles_rad[3] = { this->m_arm->CalcAngleRadFromEncoder(ArmConstants::ArmJoint::shoulder),
                            this->m_arm->CalcAngleRadFromEncoder(ArmConstants::ArmJoint::elbow),
@@ -29,6 +30,9 @@ void DriveArm::Execute() {
   this->m_arm->RunJointToPower(ArmConstants::ArmJoint::shoulder, omega[ArmConstants::ArmJoint::shoulder]);
   this->m_arm->RunJointToPower(ArmConstants::ArmJoint::elbow, omega[ArmConstants::ArmJoint::elbow]);
   this->m_arm->RunJointToPower(ArmConstants::ArmJoint::wrist, omega[ArmConstants::ArmJoint::wrist]);
+  */
+
+  this->m_arm->RunJointToPower(ArmConstants::ArmJoint::wrist, this->tool_y_velocity());
 
 }
 

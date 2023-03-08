@@ -85,11 +85,11 @@ namespace DriveConstants {
 // GripperConstants is a location for all constants related to the Gripper
 namespace GripperConstants {
 
-    const int gripper_motor_id = 6;
-    const int PCM_grip = 6;
-    const int PCM_release = 7;
+    const int gripper_motor_id = 10;
+    const int PCM_grip = 0;
+    const int PCM_release = 1;
 
-    const double gripper_speed = 0.25;
+    const double gripper_speed = 0.15;
 
 }
 
@@ -121,6 +121,8 @@ namespace ArmConstants {
     const PID_Coefficients shoulder_pid(0, 0.01, 0, 0);
     const PID_Coefficients elbow_pid(0, 0.01, 0, 0);
     const PID_Coefficients wrist_pid(0, 0.01, 0, 0);
+
+    const double ARM_ENCODER_MIDPOINT[3] = { 900.0, 65000.0, 3500.0 };
 
     enum ArmJoint {shoulder=0, elbow=1, wrist=2};
 

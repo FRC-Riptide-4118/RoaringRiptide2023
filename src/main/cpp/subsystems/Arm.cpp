@@ -104,21 +104,43 @@ void Arm::RunJointToSpeed(ArmConstants::ArmJoint arm_joint, double setpoint) {
 
 void Arm::RunJointToPower(ArmConstants::ArmJoint arm_joint, double setpoint) {
     
+    this->SetLimitSwitchLatches(arm_joint, this->limit_switch_start_latches, this->limit_switch_max_latches);
     switch(arm_joint) {
 
         case ArmConstants::ArmJoint::shoulder:
-            this->shoulder_left_motor.Set(ControlMode::PercentOutput, setpoint);
+            if (this->limit_switch_max_latches[arm_joint] && (setpoint > 0))  
+                this->shoulder_left_motor.Set(ControlMode::PercentOutput, 0);
+            else if (this->limit_switch_start_latches[arm_joint] && (setpoint < 0))
+                this->shoulder_left_motor.Set(ControlMode::PercentOutput, 0);
+            else
+                this->shoulder_left_motor.Set(ControlMode::PercentOutput, setpoint);
             break;
 
         case ArmConstants::ArmJoint::elbow:
-            this->elbow_left_motor.Set(ControlMode::PercentOutput, setpoint);
+            if (this->limit_switch_max_latches[arm_joint] && (-setpoint > 0))  
+                this->elbow_left_motor.Set(ControlMode::PercentOutput, 0);
+            else if (this->limit_switch_start_latches[arm_joint] && (-setpoint < 0))
+                this->elbow_left_motor.Set(ControlMode::PercentOutput, 0);
+            else
+                this->elbow_left_motor.Set(ControlMode::PercentOutput, -setpoint);
             break;
 
         default:
-            this->wrist_motor.Set(ControlMode::PercentOutput, setpoint);
+            if (this->limit_switch_max_latches[arm_joint] && (setpoint > 0))  
+                this->wrist_motor.Set(ControlMode::PercentOutput, 0);
+            else if (this->limit_switch_start_latches[arm_joint] && (setpoint < 0))
+                this->wrist_motor.Set(ControlMode::PercentOutput, 0);
+            else
+                this->wrist_motor.Set(ControlMode::PercentOutput, setpoint);
             break;
 
     }
+
+    if (setpoint > 0)
+        this->limit_switch_max_latches[arm_joint] = false;
+    
+    if (setpoint < 0)
+        this->limit_switch_start_latches[arm_joint] = false;
 
 }
 
@@ -195,5 +217,15 @@ bool Arm::GetLimitSwitch(ArmConstants::ArmJoint arm_joint) {
             return !this->wrist_limit.Get();
 
     }
+
+}
+
+void Arm::SetLimitSwitchLatches(ArmConstants::ArmJoint arm_joint, bool* start_latches, bool* max_latches) {
+
+    if ( this->GetLimitSwitch(arm_joint) && (abs(this->GetRawEncoderPosition(arm_joint)) > ArmConstants::ARM_ENCODER_MIDPOINT[arm_joint]) )
+        max_latches[arm_joint] = true;
+
+    if ( this->GetLimitSwitch(arm_joint) && (abs(this->GetRawEncoderPosition(arm_joint)) < ArmConstants::ARM_ENCODER_MIDPOINT[arm_joint]) )
+        start_latches[arm_joint] = true;
 
 }

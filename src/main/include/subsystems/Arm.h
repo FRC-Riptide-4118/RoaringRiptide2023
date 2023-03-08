@@ -21,6 +21,7 @@ class Arm : public frc2::SubsystemBase {
   void CalcJointVelocities( double omega[3], double angles_rad[3], double tool_velocity[2], double omega_tool );
   double CalcAngleRadFromEncoder(ArmConstants::ArmJoint arm_joint);
   bool GetLimitSwitch(ArmConstants::ArmJoint arm_joint);
+  void SetLimitSwitchLatches(ArmConstants::ArmJoint arm_joint, bool* start_latches, bool* max_latches);
 
  private:
   WPI_TalonSRX shoulder_left_motor = {ArmConstants::shoulder_left_motor_id};
@@ -32,5 +33,8 @@ class Arm : public frc2::SubsystemBase {
   frc::DigitalInput shoulder_limit{ArmConstants::shoulder_limit_port};
   frc::DigitalInput elbow_limit{ArmConstants::elbow_limit_port};
   frc::DigitalInput wrist_limit{ArmConstants::wrist_limit_port};
+
+  bool limit_switch_start_latches[3];
+  bool limit_switch_max_latches[3];
 
 };

@@ -35,11 +35,12 @@ RobotContainer::RobotContainer() {
 
   // Initialize all of your commands and subsystems here
   m_drive.SetDefaultCommand( DefaultDrive{ &m_drive, [this] {return driver_controller.GetRightX(); }, [this] {return driver_controller.GetLeftY(); } } );
-  m_arm.SetDefaultCommand( DriveArm{ &m_arm, [this] {return 10*arm_controller.GetRightX();}, [this] {return 10*arm_controller.GetLeftY();} } );
+  m_arm.SetDefaultCommand( DriveArm{ &m_arm, [this] {return arm_controller.GetRightX();}, [this] {return arm_controller.GetLeftY();} } );
+  m_gripper.SetDefaultCommand( DefaultGripper(&m_gripper) );
 
   // Configure the button bindings
   ConfigureButtonBindings();
-
+\
 }
 
 void RobotContainer::ConfigureButtonBindings() {

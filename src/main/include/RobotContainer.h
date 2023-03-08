@@ -63,9 +63,7 @@ class RobotContainer {
   frc::Field2d field;
 
   Drive m_drive;
-
   Gripper m_gripper;
-
   Arm m_arm;
 
   /* ----- SIMPLE COMMAND DECALARATIONS ---- */
@@ -78,20 +76,21 @@ class RobotContainer {
   frc2::RunCommand cube_out{[this] {m_gripper.CubeOut();}, {&m_gripper}};
 
   // [ARM]
+  
 
   /* ------ CONTROLLER/BUTTON DECLARATIONS ---- */
 
   frc2::CommandXboxController driver_controller{ControllerConstants::driver_controller_port};
   frc2::CommandXboxController arm_controller{ControllerConstants::arm_controller_port};
 
-  frc2::Trigger right_bumper = driver_controller.RightBumper();
+  frc2::Trigger right_bumper = arm_controller.RightBumper();
   frc2::Trigger left_bumper = driver_controller.LeftBumper();
-  frc2::Trigger right_trigger = driver_controller.RightTrigger();
+  frc2::Trigger right_trigger = arm_controller.RightTrigger();
   frc2::Trigger left_trigger = driver_controller.LeftTrigger();
   frc2::Trigger x_button = driver_controller.X();
   frc2::Trigger y_button = driver_controller.Y();
   frc2::Trigger a_button = driver_controller.A();
-  frc2::Trigger b_button = driver_controller.B();
+  frc2::Trigger b_button = arm_controller.B();
 
   void ConfigureButtonBindings();
 
