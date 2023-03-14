@@ -17,18 +17,20 @@ class Arm : public frc2::SubsystemBase {
   double GetRawEncoderPosition(ArmConstants::ArmJoint arm_joint);
   double GetEncoderRawVelocity(ArmConstants::ArmJoint arm_joint);
   void RunJointToSpeed(ArmConstants::ArmJoint arm_joint, double setpoint);
-  void RunJointToPower(ArmConstants::ArmJoint arm_joint, double setpoint);
+  void RunJointToPowerAndHold(ArmConstants::ArmJoint arm_joint, double setpoint);
+  void RunJointToPowerAndHold_UNSAFE(ArmConstants::ArmJoint arm_joint, double setpoint);
   void CalcJointVelocities( double omega[3], double angles_rad[3], double tool_velocity[2], double omega_tool );
   double CalcAngleRadFromEncoder(ArmConstants::ArmJoint arm_joint);
   bool GetLimitSwitch(ArmConstants::ArmJoint arm_joint);
   void SetLimitSwitchLatches(ArmConstants::ArmJoint arm_joint, bool* start_latches, bool* max_latches);
+  void ResetEncoders(void);
 
  private:
   WPI_TalonSRX shoulder_left_motor = {ArmConstants::shoulder_left_motor_id};
   WPI_VictorSPX shoulder_right_motor = {ArmConstants::shoulder_right_motor_id};
   TalonFX elbow_left_motor = {ArmConstants::elbow_left_motor_id};
   TalonFX elbow_right_motor = {ArmConstants::elbow_right_motor_id};
-  WPI_TalonSRX wrist_motor = {ArmConstants::wrist_motor_id};
+  // WPI_TalonSRX wrist_motor = {ArmConstants::wrist_motor_id};
 
   frc::DigitalInput shoulder_limit{ArmConstants::shoulder_limit_port};
   frc::DigitalInput elbow_limit{ArmConstants::elbow_limit_port};

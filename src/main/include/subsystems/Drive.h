@@ -37,12 +37,18 @@ class Drive : public frc2::SubsystemBase {
   void CurvatureDrive(double forward, double rotate);
   // Arcade drive implementation
   void ArcadeDrive(double forward, double rotate);
+  void VelocityDrive(units::meters_per_second_t left_velocity, units::meters_per_second_t right_velocity);
+  void PositionDrive(double setpoint);
   double GetRawEncoderVelocity(DriveConstants::Side side);
   double GetRawEncoderPosition(DriveConstants::Side side);
   units::meter_t GetEncoderPositionMeters(DriveConstants::Side side);
   double GetHeading();
   void CreateOdometry(units::meter_t xpos, units::meter_t ypos, frc::Pose2d pose);
+  frc::DifferentialDriveOdometry* GetOdometry(void);
   void SetField(frc::Field2d* field);
+  void Reset(void);
+  void ToggleLimelight(void);
+  void BreakPID(void);
 
  private:
   // All of the left motor controllers are defined here
@@ -56,6 +62,9 @@ class Drive : public frc2::SubsystemBase {
   rev::SparkMaxRelativeEncoder left_encoder{left_spark0.GetEncoder()};
   rev::SparkMaxRelativeEncoder right_encoder{right_spark0.GetEncoder()};
 
+  rev::SparkMaxPIDController left_pid_controller{left_spark0.GetPIDController()};
+  rev::SparkMaxPIDController right_pid_controller{right_spark0.GetPIDController()};
+
   ctre::phoenix::sensors::PigeonIMU pigeon_imu = {DriveConstants::pigeon_id};
 
   // The MotorControllerGroups form a DifferentialDrive
@@ -63,5 +72,9 @@ class Drive : public frc2::SubsystemBase {
 
   frc::DifferentialDriveOdometry* odometry;
   frc::Field2d* field;
+
+  std::shared_ptr<nt::NetworkTable> table = nt::NetworkTableInstance::GetDefault().GetTable("limelight");
+
+  int limelight_led_status;
 
 };

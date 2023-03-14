@@ -4,20 +4,23 @@
 
 #pragma once
 
-#include <frc2/command/CommandBase.h>
 #include <frc2/command/CommandHelper.h>
-
+#include <frc2/command/InstantCommand.h>
+#include <subsystems/Drive.h>
+#include <subsystems/Arm.h>
 #include <subsystems/Gripper.h>
 
-class DefaultGripper
-    : public frc2::CommandHelper<frc2::CommandBase, DefaultGripper> {
+class Reset
+    : public frc2::CommandHelper<frc2::InstantCommand,
+                                 Reset> {
  public:
-  DefaultGripper(Gripper* m_gripper, std::function<double()> setpoint);
+  Reset(Drive* drive, Arm* arm, Gripper* gripper);
 
-  void Execute() override;
+  void Initialize() override;
 
  private:
-  std::function<double()> setpoint;
+  Drive* m_drive;
+  Arm* m_arm;
   Gripper* m_gripper;
-  
+
 };

@@ -11,7 +11,7 @@
 
 class Gripper : public frc2::SubsystemBase {
  public:
-  Gripper();
+  Gripper(std::function<double()> elbow_theta);
   void Periodic() override;
   void CubeIn(void);
   void CubeOut(void);
@@ -19,10 +19,15 @@ class Gripper : public frc2::SubsystemBase {
   void ConeGrab(void);
   void ConeRelease(void); 
   void ConeToggle(void);
+  void RunJointToPowerAndHold_UNSAFE(std::function<double()> setpoint);
+  double CalcAngleRadFromEncoder(void);
+  void Reset(void);
 
  private:
+  std::function<double()> elbow_theta;
   bool gripper_position;
   WPI_VictorSPX gripper_motor = {GripperConstants::gripper_motor_id};
+  WPI_TalonSRX wrist_motor = {ArmConstants::wrist_motor_id};
   frc::DoubleSolenoid gripper_grab{frc::PneumaticsModuleType::CTREPCM, GripperConstants::PCM_grip, GripperConstants::PCM_release};
 
 };

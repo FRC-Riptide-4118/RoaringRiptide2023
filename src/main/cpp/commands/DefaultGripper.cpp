@@ -4,8 +4,9 @@
 
 #include "commands/DefaultGripper.h"
 
-DefaultGripper::DefaultGripper(Gripper* m_gripper) {
+DefaultGripper::DefaultGripper(Gripper* m_gripper, std::function<double()> setpoint) {
   
+  this->setpoint = setpoint;
   this->m_gripper = m_gripper;
   AddRequirements({m_gripper});
 
@@ -16,5 +17,6 @@ DefaultGripper::DefaultGripper(Gripper* m_gripper) {
 void DefaultGripper::Execute() {
 
   this->m_gripper->Stop();
+  this->m_gripper->RunJointToPowerAndHold_UNSAFE(setpoint);
 
 }

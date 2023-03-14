@@ -4,7 +4,11 @@
 
 #include "subsystems/Gripper.h"
 
-Gripper::Gripper() {
+Gripper::Gripper(std::function<double()> elbow_theta) {
+
+    this->elbow_theta = elbow_theta;
+    this->wrist_motor.ConfigFactoryDefault();
+    this->wrist_motor.SetSelectedSensorPosition(0);
 
     this->gripper_position = false;
     this->ConeRelease();
@@ -59,5 +63,26 @@ void Gripper::ConeToggle(void) {
             this->gripper_position = false;
             break;
     }
+
+}
+
+void Gripper::RunJointToPowerAndHold_UNSAFE(std::function<double()> setpoint) {
+
+    double wrist_theta = this->elbow_theta() + this->CalcAngleRadFromEncoder();
+    double wrist_cos = cos(wrist_theta);
+
+    this->wrist_motor.Set(ControlMode::PercentOutput, setpoint(), DemandType::DemandType_ArbitraryFeedForward, wrist_cos*ArmConstants::WRIST_HOLD);
+
+}
+
+double Gripper::CalcAngleRadFromEncoder(void) {
+
+    return -this->wrist_motor.GetSelectedSensorPosition()/ArmConstants::WRIST_TICKS_PER_RADIAN + ArmConstants::WRIST_RAD_OFFSET;
+
+}
+
+void Gripper::Reset(void) {
+    
+    this->wrist_motor.SetSelectedSensorPosition(0.0);
 
 }

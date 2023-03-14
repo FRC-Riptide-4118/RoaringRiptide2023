@@ -4,20 +4,19 @@
 
 #pragma once
 
-#include <frc2/command/CommandBase.h>
 #include <frc2/command/CommandHelper.h>
-
+#include <frc2/command/PIDCommand.h>
 #include <subsystems/Gripper.h>
 
-class DefaultGripper
-    : public frc2::CommandHelper<frc2::CommandBase, DefaultGripper> {
+class RunWristToAngle
+    : public frc2::CommandHelper<frc2::PIDCommand, RunWristToAngle> {
  public:
-  DefaultGripper(Gripper* m_gripper, std::function<double()> setpoint);
+  RunWristToAngle(Gripper* gripper, double setpoint_radian, PID_Coefficients pid_controller);
 
-  void Execute() override;
+  bool IsFinished() override;
 
  private:
-  std::function<double()> setpoint;
   Gripper* m_gripper;
-  
+  double setpoint_radian;
+
 };

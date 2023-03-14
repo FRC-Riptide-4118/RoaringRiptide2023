@@ -2,30 +2,23 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-#include "commands/DefaultArm.h"
+#include "commands/RequireArm.h"
 
-DefaultArm::DefaultArm(Arm* arm) {
+RequireArm::RequireArm(Arm* arm) {
   // Use addRequirements() here to declare subsystem dependencies.
-  this->m_arm = arm;
-  AddRequirements( {arm} );
-
+  AddRequirements({arm});
 }
 
 // Called when the command is initially scheduled.
-void DefaultArm::Initialize() {}
+void RequireArm::Initialize() {}
 
 // Called repeatedly when this Command is scheduled to run
-void DefaultArm::Execute() {
-
-  this->m_arm->RunJointToPowerAndHold(ArmConstants::ArmJoint::shoulder, 0);
-  this->m_arm->RunJointToPowerAndHold(ArmConstants::ArmJoint::elbow, 0);
-
-}
+void RequireArm::Execute() {}
 
 // Called once the command ends or is interrupted.
-void DefaultArm::End(bool interrupted) {}
+void RequireArm::End(bool interrupted) {}
 
 // Returns true when the command should end.
-bool DefaultArm::IsFinished() {
+bool RequireArm::IsFinished() {
   return false;
 }

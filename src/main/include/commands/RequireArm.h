@@ -6,7 +6,7 @@
 
 #include <frc2/command/CommandBase.h>
 #include <frc2/command/CommandHelper.h>
-#include "subsystems/Arm.h"
+#include <subsystems/Arm.h>
 
 /**
  * An example command.
@@ -15,10 +15,10 @@
  * directly; this is crucially important, or else the decorator functions in
  * Command will *not* work!
  */
-class DriveArm
-    : public frc2::CommandHelper<frc2::CommandBase, DriveArm> {
+class RequireArm
+    : public frc2::CommandHelper<frc2::CommandBase, RequireArm> {
  public:
-  DriveArm(Arm* arm, std::function<double()> tool_right_y_velocity, std::function<double()> tool_left_y_velocity, std::function<bool()> go_forward, std::function<bool()> go_backwards);
+  RequireArm(Arm* arm);
 
   void Initialize() override;
 
@@ -27,12 +27,4 @@ class DriveArm
   void End(bool interrupted) override;
 
   bool IsFinished() override;
-
- private:
-  Arm* m_arm;
-  std::function<double()> tool_right_y_velocity;
-  std::function<double()> tool_left_y_velocity;
-  std::function<bool()> go_forward;
-  std::function<bool()> go_backwards;
-  
 };
