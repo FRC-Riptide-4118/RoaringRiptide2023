@@ -77,11 +77,11 @@ namespace DriveConstants {
     constexpr auto kMaxSpeed = 4_mps;
     constexpr auto kMaxAcceleration = 3_mps / 1_s;
 
-    const double OUT_OF_COMMUNITY = -4.0/meters_per_tick.value();
+    const double OUT_OF_COMMUNITY = -5.0/meters_per_tick.value();
     const double AWAY_FROM_SCORE = -1.25/meters_per_tick.value();
     const double ONTO_CHARGER = -1.97/meters_per_tick.value();
 
-    const PID_Coefficients drive_PID_coefficients(0, 0.01, 0, 0);
+    const PID_Coefficients drive_PID_coefficients(0, 0.015, 0, 0);
 
 }
 

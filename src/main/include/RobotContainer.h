@@ -475,7 +475,7 @@ class RobotContainer {
 
           frc2::RunCommand{
 
-            [this] {m_drive.PositionDrive(DriveConstants::ONTO_CHARGER-DriveConstants::AWAY_FROM_SCORE);},
+            [this] {m_drive.PositionDrive(DriveConstants::ONTO_CHARGER);},
             {&m_drive}
 
           },
