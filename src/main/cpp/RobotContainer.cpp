@@ -8,10 +8,12 @@ RobotContainer::RobotContainer() {
 
   frc::Shuffleboard::GetTab("Game").Add(this->m_auto_chooser);
   m_auto_chooser.SetDefaultOption("High Drive-Spin", &place_cone_high_drive_spin);
-  m_auto_chooser.SetDefaultOption("Mid Drive-Spin", &place_cone_mid_drive_spin);
-  m_auto_chooser.SetDefaultOption("High Drive", &place_cone_high_drive);
-  m_auto_chooser.SetDefaultOption("Mid Drive", &place_cone_mid_drive);
-  m_auto_chooser.SetDefaultOption("Nothing", &cone_grab);
+  m_auto_chooser.AddOption("Mid Drive-Spin", &place_cone_mid_drive_spin);
+  m_auto_chooser.AddOption("High Drive", &place_cone_high_drive);
+  m_auto_chooser.AddOption("Mid Drive", &place_cone_mid_drive);
+  m_auto_chooser.AddOption("High Charger", &place_cone_onto_charger);
+  m_auto_chooser.AddOption("Charger TEST", &onto_charger_TEST);
+  m_auto_chooser.AddOption("Nothing", &cone_grab);
 
   m_drive.CreateOdometry(0_m, 0_m, test_trajectory.InitialPose());
 

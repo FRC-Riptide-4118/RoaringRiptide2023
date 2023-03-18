@@ -79,6 +79,7 @@ namespace DriveConstants {
 
     const double OUT_OF_COMMUNITY = -4.0/meters_per_tick.value();
     const double AWAY_FROM_SCORE = -1.25/meters_per_tick.value();
+    const double ONTO_CHARGER = -1.97/meters_per_tick.value();
 
     const PID_Coefficients drive_PID_coefficients(0, 0.01, 0, 0);
 

@@ -415,6 +415,112 @@ class RobotContainer {
     }
 
   };
+
+  frc2::SequentialCommandGroup place_cone_onto_charger{
+
+    reset,
+
+    cone_grab,
+
+    frc2::ParallelRaceGroup{
+
+      frc2::ParallelCommandGroup{
+        RequireArm(&m_arm),
+        run_shoulder_to_high,
+        run_elbow_to_high
+      },
+
+      frc2::WaitCommand(2_s)
+
+    },
+
+    frc2::ParallelRaceGroup{
+
+      frc2::ParallelCommandGroup{
+        RequireArm(&m_arm),
+        run_wrist_to_high
+      },
+
+      frc2::WaitCommand(1_s)
+
+    },
+
+    cone_release,
+
+    frc2::ParallelRaceGroup{
+
+      frc2::RunCommand{
+
+        [this] {m_drive.PositionDrive(DriveConstants::AWAY_FROM_SCORE);},
+        {&m_drive}
+
+      },
+
+      frc2::WaitCommand(1_s)
+
+    },
+
+    frc2::ParallelCommandGroup{
+
+      frc2::ParallelCommandGroup{
+        RequireArm(&m_arm),
+        run_shoulder_to_start,
+        run_elbow_to_start,
+        run_wrist_to_start
+      },
+
+      frc2::SequentialCommandGroup{
+
+        frc2::ParallelRaceGroup{
+
+          frc2::RunCommand{
+
+            [this] {m_drive.PositionDrive(DriveConstants::ONTO_CHARGER-DriveConstants::AWAY_FROM_SCORE);},
+            {&m_drive}
+
+          },
+
+        frc2::WaitCommand(2_s)
+
+      }
+
+      }
+
+    }
+
+  };
+
+  frc2::SequentialCommandGroup onto_charger_TEST{
+
+    reset,
+
+    cone_grab,
+
+    frc2::ParallelCommandGroup{
+
+      frc2::ParallelCommandGroup{
+        RequireArm(&m_arm),
+        run_shoulder_to_start,
+        run_elbow_to_start,
+        run_wrist_to_start
+      },
+
+      frc2::ParallelRaceGroup{
+
+        frc2::RunCommand{
+
+          [this] {m_drive.PositionDrive(DriveConstants::ONTO_CHARGER);},
+          {&m_drive}
+
+        },
+
+        frc2::WaitCommand(2_s)
+
+      }
+
+    }
+
+  };
   /* ------ CONTROLLER/BUTTON DECLARATIONS ---- */
 
   frc2::CommandXboxController driver_controller{ControllerConstants::driver_controller_port};
